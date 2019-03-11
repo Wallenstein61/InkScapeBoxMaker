@@ -23,7 +23,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 __version__ = "0.1" 
 
-from boxmakerLib import BoxMaker
+from boxmakerNLib import BoxMaker
 # Create effect instance and apply it.
 effect = BoxMaker()
 effect.affect()
