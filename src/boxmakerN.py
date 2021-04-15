@@ -18,6 +18,8 @@ GNU General Public License for more details.
 For a copy of the GNU General Public License
 write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+Updated for InkScape 1.0 by Leon Palnau 4/15/2021
 """
 
 
@@ -25,6 +27,5 @@ __version__ = "0.1"
 
 from boxmakerNLib import BoxMaker
 # Create effect instance and apply it.
-effect = BoxMaker()
-effect.affect()
-
+Effect = BoxMaker()
+Effect.run()
