@@ -5,7 +5,6 @@
 
   <dependency type="executable" location="extensions">boxmakerN.py</dependency>
   <dependency type="executable" location="extensions">boxmakerNLib.py</dependency>
-  <dependency type="executable" location="extensions">simpletransform.py</dependency>
   <dependency type="executable" location="extensions">inkex.py</dependency>
 
   	<param name="tab" type="notebook">
