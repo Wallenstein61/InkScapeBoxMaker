@@ -1,4 +1,4 @@
-# InkScapeBoxMaker
+# InkScapeBoxMaker - For InkScape 1.0+
 This is an inkscape extension to support various Laser Cut Box Layouts.
 
 Currently it supports three types of boxes

@@ -18,21 +18,24 @@ GNU General Public License for more details.
 For a copy of the GNU General Public License
 write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+Updated for InkScape 1.0 by Leon Palnau 4/15/2021
 """
 
 
 __version__ = "0.1" 
 
 from datetime import datetime
+from lxml import etree
 import sys,inkex,simplestyle,gettext
 import math, abc
 _ = gettext.gettext
 
 def drawS(parent, XYstring):         # Draw lines from a list
   name='part'
-  style = { 'stroke': '#000000', 'fill': 'none', 'stroke-width': self.unittouu("0.1 mm") }
+  style = { 'stroke': '#000000', 'fill': 'none', 'stroke-width': self.svg.unittouu("0.1 mm") }
   drw = {'style':simplestyle.formatStyle(style),inkex.addNS('label','inkscape'):name,'d':XYstring}
-  inkex.etree.SubElement(parent, inkex.addNS('path','svg'), drw )
+  etree.SubElement(parent, inkex.addNS('path','svg'), drw )
   return
 
 class BoxType:
@@ -308,24 +311,24 @@ class BoxMaker(inkex.Effect):
       inkex.Effect.__init__(self)
       # Define options - Must match to the <param> elements in the .inx file
       # just dummies for the tabs
-      self.OptionParser.add_option('--tab',action='store',type='string', dest='tab',default='mm',help='just a dummy')
-      self.OptionParser.add_option('--HingeAndFrame',action='store',type='string', dest='tab',default='mm',help='just a dummy')
-      self.OptionParser.add_option('--Development',action='store',type='string', dest='tab',default='mm',help='just a dummy')
+      self.arg_parser.add_argument('--tab',action='store',type=str, dest='tab',default='mm',help='just a dummy')
+      self.arg_parser.add_argument('--HingeAndFrame',action='store',type=str, dest='tab',default='mm',help='just a dummy')
+      self.arg_parser.add_argument('--Development',action='store',type=str, dest='tab',default='mm',help='just a dummy')
 
-      self.OptionParser.add_option('--boxType',action='store',type='string', dest='boxType',default='openBox',help='Type of Box')
-      self.OptionParser.add_option('--unit',action='store',type='string', dest='unit',default='mm',help='units of measurement')
+      self.arg_parser.add_argument('--boxType',action='store',type=str, dest='boxType',default='openBox',help='Type of Box')
+      self.arg_parser.add_argument('--unit',action='store',type=str, dest='unit',default='mm',help='units of measurement')
       
-      self.OptionParser.add_option('--box_width',action='store',type='float', dest='boxWidth',default=200.0, help='width of the box.')
-      self.OptionParser.add_option('--box_depth',action='store',type='float', dest='boxDepth',default=120.0, help='depth of the box.')
-      self.OptionParser.add_option('--box_height',action='store',type='float', dest='boxHeight',default=70.0 ,help='height of the box.')
-      self.OptionParser.add_option('--thickness',action='store',type='float', dest='thickness',default=0, help='thickness of the material.')
-      self.OptionParser.add_option('--shelfCount',action='store',type='int', dest='shelfCount',default=1, help='number of shelves.')
+      self.arg_parser.add_argument('--box_width',action='store',type=float, dest='boxWidth',default=200.0, help='width of the box.')
+      self.arg_parser.add_argument('--box_depth',action='store',type=float, dest='boxDepth',default=120.0, help='depth of the box.')
+      self.arg_parser.add_argument('--box_height',action='store',type=float, dest='boxHeight',default=70.0 ,help='height of the box.')
+      self.arg_parser.add_argument('--thickness',action='store',type=float, dest='thickness',default=0, help='thickness of the material.')
+      self.arg_parser.add_argument('--shelfCount',action='store',type=int, dest='shelfCount',default=1, help='number of shelves.')
 
-      self.OptionParser.add_option('--frameEdgesMin',action='store',type='float', dest='frameEdgesMin',default=0,help='Minimum distance of frame to edge.')
-      self.OptionParser.add_option('--frameLength',action='store',type='float', dest='frameLength',default=0,help='Length of a frame.')
-      self.OptionParser.add_option('--hingeCircleFactor',action='store',type='float', dest='hingeCircleFactor',default=1.5,help='Size of hinge circle.')
+      self.arg_parser.add_argument('--frameEdgesMin',action='store',type=float, dest='frameEdgesMin',default=0,help='Minimum distance of frame to edge.')
+      self.arg_parser.add_argument('--frameLength',action='store',type=float, dest='frameLength',default=0,help='Length of a frame.')
+      self.arg_parser.add_argument('--hingeCircleFactor',action='store',type=float, dest='hingeCircleFactor',default=1.5,help='Size of hinge circle.')
 
-      self.OptionParser.add_option('--debug',action='store',type='inkbool', dest='debug',default='False',help='debug Info')
+      self.arg_parser.add_argument('--debug',action='store',type=inkex.Boolean, dest='debug',default='False',help='debug Info')
       
       
       
@@ -342,14 +345,14 @@ class BoxMaker(inkex.Effect):
     unit=self.options.unit
     self.unit = unit
     # starting cut length. Will be adjusted for get an integer number of cuts in the y-direction.
-    self.boxWidth = self.unittouu(str(self.options.boxWidth) + unit)
-    self.boxDepth = self.unittouu(str(self.options.boxDepth) + unit)
-    self.boxHeight = self.unittouu(str(self.options.boxHeight) + unit)
-    self.thickness = self.unittouu(str(self.options.thickness) + unit)
+    self.boxWidth = self.svg.unittouu(str(self.options.boxWidth) + unit)
+    self.boxDepth = self.svg.unittouu(str(self.options.boxDepth) + unit)
+    self.boxHeight = self.svg.unittouu(str(self.options.boxHeight) + unit)
+    self.thickness = self.svg.unittouu(str(self.options.thickness) + unit)
     self.shelfcount = self.options.shelfCount
 
-    self.frameEdgesMin = self.unittouu(str(self.options.frameEdgesMin) + unit)
-    self.frameLength = self.unittouu(str(self.options.frameLength) + unit)
+    self.frameEdgesMin = self.svg.unittouu(str(self.options.frameEdgesMin) + unit)
+    self.frameLength = self.svg.unittouu(str(self.options.frameLength) + unit)
     self.hingeCircleFactor = self.options.hingeCircleFactor
     
     self.debug = self.options.debug
@@ -372,7 +375,7 @@ class BoxMaker(inkex.Effect):
                               
     # inkex.debug("Info. %.2f %.2f %s %.2f" % (self.boxWidth, self.frameLength, repr(self.debug), self.hingeCircleFactor))
  
-    self.parent = self.current_layer
+    self.parent = self.svg.get_current_layer()
     
     self.drawBox()
 #    inkex.debug("Dict up " + repr( Direction.up['walkIn'][0]))
@@ -814,22 +817,22 @@ class BoxMaker(inkex.Effect):
       self.insertPath(box, color)
 
   def insertText(self, text, position, color='black'):
-      style = { 'stroke': color, 'stroke-width': self.unittouu("0.1 mm"), 'font-size':'3px'}
-      drw = {'style': simplestyle.formatStyle(style), 'x':'%f'%(position.x), 'y':'%f'%(position.y)}
-      textNode = inkex.etree.SubElement(self.parent, inkex.addNS('text', 'svg'), drw)
+      style = { 'stroke': color, 'stroke-width': self.svg.unittouu("0.1 mm"), 'font-size':'3px'}
+      drw = {'style': str(inkex.Style(style)), 'x':'%f'%(position.x), 'y':'%f'%(position.y)}
+      textNode = etree.SubElement(self.parent, inkex.addNS('text', 'svg'), drw)
       textNode.text = text
 
   def insertPath(self, path, color='black'):
-    style = { 'stroke': color, 'fill': 'none', 'stroke-width': self.unittouu("0.1 mm")}
+    style = { 'stroke': color, 'fill': 'none', 'stroke-width': self.svg.unittouu("0.1 mm")}
     actions = path.translateToSVGd()
 #    inkex.debug(' actions %s'%actions)
-    drw = {'style':simplestyle.formatStyle(style), 'd': actions}
-    edge = inkex.etree.SubElement(self.parent, inkex.addNS('path', 'svg'), drw)
+    drw = {'style':str(inkex.Style(style)), 'd': actions}
+    edge = etree.SubElement(self.parent, inkex.addNS('path', 'svg'), drw)
 
   def insertCircle(self, r, center, color='black'):
-    style = { 'stroke': color, 'fill': 'none', 'stroke-width': self.unittouu("0.1 mm")}
-    drw = {'style':simplestyle.formatStyle(style), 'cx':'%f'%center.x, 'cy':'%f'%center.y, 'r': '%f'%r}
-    edge = inkex.etree.SubElement(self.parent, inkex.addNS('circle', 'svg'), drw)
+    style = { 'stroke': color, 'fill': 'none', 'stroke-width': self.svg.unittouu("0.1 mm")}
+    drw = {'style':str(inkex.Style(style)), 'cx':'%f'%center.x, 'cy':'%f'%center.y, 'r': '%f'%r}
+    edge = etree.SubElement(self.parent, inkex.addNS('circle', 'svg'), drw)
 
   def toSVGString(self):
     return "a %f %f 0 1 1 %f %f"%(self.r, self.r, self.endPoint.x, self.endPoint.y)
@@ -849,14 +852,14 @@ class BoxMaker(inkex.Effect):
         
     if self.debug:
       self.markerCount+= 1
-      style = { 'stroke': color, 'fill': 'none', 'stroke-width': self.unittouu("2 mm")}
-      drw = {'style': simplestyle.formatStyle(style), 'cx':'%f'%center.x, 'cy':'%f'%center.y, 'r':'4' }
-      inkex.etree.SubElement(self.parent, inkex.addNS('circle', 'svg'), drw)
+      style = { 'stroke': color, 'fill': 'none', 'stroke-width': self.svg.unittouu("2 mm")}
+      drw = {'style': str(inkex.Style(style)), 'cx':'%f'%center.x, 'cy':'%f'%center.y, 'r':'4' }
+      etree.SubElement(self.parent, inkex.addNS('circle', 'svg'), drw)
 
-      style = { 'stroke': 'black', 'stroke-width': self.unittouu("0.1 mm"), 'font-size':'3px'}
-      drw = {'style': simplestyle.formatStyle(style), 'x':'%f'%(center.x+5.0), 'y':'%f'%(center.y+5), 'r':'4'}
+      style = { 'stroke': 'black', 'stroke-width': self.svg.unittouu("0.1 mm"), 'font-size':'3px'}
+      drw = {'style': str(inkex.Style(style)), 'x':'%f'%(center.x+5.0), 'y':'%f'%(center.y+5), 'r':'4'}
 #      inkex.debug("Text: %s" % drw)
-      textNode = inkex.etree.SubElement(self.parent, inkex.addNS('text', 'svg'), drw)
+      textNode = etree.SubElement(self.parent, inkex.addNS('text', 'svg'), drw)
       textNode.text = '%s: (%.2f,%.2f)'%(self.markerCount,center.x, center.y)
 
 
@@ -902,5 +905,3 @@ class BoxMaker(inkex.Effect):
     path.append(line(startEnd))
     if(inverse): path.append(line(walkOut))
     return path
-    
-
