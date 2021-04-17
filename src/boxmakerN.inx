@@ -16,7 +16,9 @@
 					<_item value="withHinge">Box with hinge for top cover</_item>
 					<_item value="openBox">Just an open box (no top)</_item>
 					<_item value="openBoxWithShelves">An open box with shelves</_item>
+					<!-- not really useful
 					<_item value="mobileLoader">Hinged Box for multiple mobile loader stand (highly experimental)</_item>
+					-->
 		  </param>
 
   		  <param name="unit" _gui-text="Unit" type="enum">
