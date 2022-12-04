@@ -28,6 +28,7 @@ __version__ = "1.0"
 from datetime import datetime
 import sys, inkex, simplestyle, gettext
 import math, abc
+from lxml import etree
 _ = gettext.gettext
 
 

@@ -9,8 +9,8 @@
 
   	<param name="tab" type="notebook">
 		<page name="Dimensions" gui-text="Box Dimensions">
-			<_param name="laserboxuse" type="description" xml:space="preserve">This extension generates the laser cut layout of various box types.
-			</_param>
+			<param name="laserboxuse" type="description" xml:space="preserve">This extension generates the laser cut layout of various box types.
+			</param>
 
   		  <param name="boxType" gui-text="Type of Box" type="optiongroup" appearance="radio/combo">
 					<option value="withHinge">Box with hinge for top cover</option>
@@ -29,21 +29,21 @@
 		  <param name="box_height" type="float" precision="2" gui-text="box height" min="1" max="1000">70.0</param>
 		  <param name="thickness" type="float" precision="2" gui-text="thickness of plywood panel" min="1" max="1000">4.0</param>
 
-			<_param name="shelfCountExplanation" type="description" xml:space="preserve">This is just for shelved boxes.
-			</_param>
+			<param name="shelfCountExplanation" type="description" xml:space="preserve">This is just for shelved boxes.
+			</param>
 		  <param name="shelfCount" type="int" gui-text="number of shelves" min="1" max="10">1</param>
 
 		  </page>
 		<page name="HingeAndFrame" gui-text="Hinge and Frame dimensions">
-			<_param name="paramInfo" type="description" xml:space="preserve">Please note that extreme values may produce weird results
-			</_param>
+			<param name="paramInfo" type="description" xml:space="preserve">Please note that extreme values may produce weird results
+			</param>
 		  <param name="frameEdgesMin" type="float" precision="2"  gui-text="Minimum distance of frame to edge" min="0.0" max="1000">5.0</param>
 		  <param name="frameLength" type="float" precision="2"  gui-text="Length of a frame " min="1.0" max="1000">10.0</param>
 		  <param name="hingeCircleFactor" type="float" precision="2"  gui-text="Size factor of hinge circle " min="1.0" max="1000">1.5</param>
 		 </page>
 		<page name="Development" gui-text="Development Support">
-			<_param name="developmentInfo" type="description" xml:space="preserve">Just some settings for development and debugging
-			</_param>
+			<param name="developmentInfo" type="description" xml:space="preserve">Just some settings for development and debugging
+			</param>
 			<param name="debug" type="boolean" gui-text="Output Debug Info">False</param>
 		 </page>
 	</param>	
@@ -55,6 +55,6 @@
     </effects-menu>
   </effect>
   <script>
-    <command reldir="extensions" interpreter="python">boxmaker.py</command>
+    <command reldir="extensions" interpreter="python">boxmakerN.py</command>
   </script>
 </inkscape-extension>
