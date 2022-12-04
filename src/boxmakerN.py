@@ -20,10 +20,11 @@ write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 Updated for InkScape 1.0 by Leon Palnau 4/15/2021
+Updated for InkScape 1.2 by Michael Breu 12/04/2022
 """
 
 
-__version__ = "0.1" 
+__version__ = "1.0" 
 
 from boxmakerNLib import BoxMaker
 # Create effect instance and apply it.
