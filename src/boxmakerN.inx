@@ -5,7 +5,6 @@
 
   <dependency type="executable" location="extensions">boxmakerN.py</dependency>
   <dependency type="executable" location="extensions">boxmakerNLib.py</dependency>
-  <dependency type="executable" location="extensions">inkex/deprecated-simple/simpletransform.py</dependency>
 
   	<param name="tab" type="notebook">
 		<page name="Dimensions" gui-text="Box Dimensions">
@@ -29,8 +28,8 @@
 		  <param name="box_height" type="float" precision="2" gui-text="box height" min="1" max="1000">70.0</param>
 		  <param name="thickness" type="float" precision="2" gui-text="thickness of plywood panel" min="1" max="1000">4.0</param>
 
-			<param name="shelfCountExplanation" type="description" xml:space="preserve">This is just for shelved boxes.
-			</param>
+			<param name="shelfCountExplanation" type="description" xml:space="preserve">
+This is just for shelved boxes.</param>
 		  <param name="shelfCount" type="int" gui-text="number of shelves" min="1" max="10">1</param>
 
 		  </page>

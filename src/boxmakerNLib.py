@@ -29,10 +29,11 @@ from datetime import datetime
 import sys, inkex, simplestyle, gettext
 import math, abc
 from lxml import etree
+
 _ = gettext.gettext
 
 
-def drawS(parent, XYstring):  # Draw lines from a list
+def draw_line(parent, XYstring):  # Draw lines from a list
     name = 'part'
     style = {'stroke': '#000000', 'fill': 'none', 'stroke-width': self.svg.unittouu("0.1 mm")}
     drw = {'style': simplestyle.formatStyle(style), inkex.addNS('label', 'inkscape'): name, 'd': XYstring}
@@ -42,11 +43,11 @@ def drawS(parent, XYstring):  # Draw lines from a list
 
 class BoxType:
 
-    def __init__(self, description, hasHinges):
+    def __init__(self, description, has_hinges):
         self.description = description
-        self.withHinges = hasHinges
+        self.withHinges = has_hinges
 
-    def hasHinges(self):
+    def has_hinges(self):
         return self.withHinges
 
 
@@ -88,7 +89,7 @@ class SVGPathAtom:
         pass
 
     @abc.abstractmethod
-    def newPos(startPos):
+    def newPos(start_pos):
         ''' returns a new position from Startpos'''
         pass
 
@@ -100,7 +101,7 @@ class Move(SVGPathAtom):
     def toSVGString(self):
         return 'M %f %f' % (self.p.x, self.p.y)
 
-    def newPos(self, startPos):
+    def newPos(self, start_pos):
         return self.p
 
 
@@ -111,8 +112,8 @@ class move(SVGPathAtom):
     def toSVGString(self):
         return "m %f %f" % (self.p.x, self.p.y)
 
-    def newPos(self, startPos):
-        return startPos.add(self.p.x, self.p.y)
+    def newPos(self, start_pos):
+        return start_pos.add(self.p.x, self.p.y)
 
 
 class line(SVGPathAtom):
@@ -122,8 +123,8 @@ class line(SVGPathAtom):
     def toSVGString(self):
         return "l %f %f" % (self.p.x, self.p.y)
 
-    def newPos(self, startPos):
-        return startPos.add(self.p.x, self.p.y)
+    def newPos(self, start_pos):
+        return start_pos.add(self.p.x, self.p.y)
 
 
 class circleArc(SVGPathAtom):
@@ -136,13 +137,13 @@ class circleArc(SVGPathAtom):
 
     def toSVGString(self):
         return "a %f %f 0 %s %s %f %f" % (
-        self.r, self.r, self.largeArc, self.sweepFlag, self.endPoint.x, self.endPoint.y)
+            self.r, self.r, self.largeArc, self.sweepFlag, self.endPoint.x, self.endPoint.y)
 
-    def newPos(self, startPos):
-        # inkex.debug("start %.2f %.2f"% (startPos.x, startPos.y))
-        endPos = startPos.add(self.endPoint.x, self.endPoint.y)
-        # inkex.debug("  end %.2f %.2f"% (endPos.x, endPos.y))
-        return endPos
+    def newPos(self, start_pos):
+        # inkex.debug("start %.2f %.2f"% (start_pos.x, start_pos.y))
+        end_pos = start_pos.add(self.endPoint.x, self.endPoint.y)
+        # inkex.debug("  end %.2f %.2f"% (end_pos.x, end_pos.y))
+        return end_pos
 
 
 class Path(list):
@@ -426,7 +427,7 @@ class BoxMaker(inkex.Effect):
         supportExtra = self.thickness / math.cos(self.inclinationRad)
 
         shelfSupportHeight = (self.shelfHeight / math.cos(self.inclinationRad) - (
-                    self.supportDistance + self.thickness)) / math.tan(self.inclinationRad)
+                self.supportDistance + self.thickness)) / math.tan(self.inclinationRad)
 
         l = self.supportDistance * (supportHeight - shelfSupportHeight - dxPlusd) / supportHeight
         shelfBackLength = l / math.sin(self.inclinationRad)
@@ -463,7 +464,7 @@ class BoxMaker(inkex.Effect):
             boxStart = boxStart.add(self.frameLength * 2, 0)
 
         shelfFrameWidth = self.shelfHeight - self.thickness * (
-                    math.cos(self.inclinationRad) / math.sin(self.inclinationRad))
+                math.cos(self.inclinationRad) / math.sin(self.inclinationRad))
         boxStart = backRestStart.add(self.backRestWidth / 4, frameDepthWithOverhead + shelfFrameWidth)
         self.insertRect(boxStart, self.backRestWidth / 2, self.thickness, 'orange')
 
@@ -594,7 +595,7 @@ class BoxMaker(inkex.Effect):
         # back left next
         bottomAndFrontBack.extend(self.boxFrames(self.boxHeight, Direction.up))
 
-        if self.boxType.hasHinges():
+        if self.boxType.has_hinges():
             # back width next
             self.markPoints(bottomAndFrontBack.finalPosition(), 'yellow')
             # Zurueck wg. Deckel (+ Rotation)
@@ -603,15 +604,15 @@ class BoxMaker(inkex.Effect):
 
         bottomAndFrontBack.append(line(Point(self.thickness, 0)))
 
-        if self.boxType.hasHinges():
+        if self.boxType.has_hinges():
             bottomAndFrontBack.append(line(Point(0, backForHinge - self.thickness * (1.0 + math.sqrt(2)) / 2.0)))
 
         bottomAndFrontBack.append(line(Point(self.boxWidth - 2 * self.thickness, 0)))
 
-        if self.boxType.hasHinges():
+        if self.boxType.has_hinges():
             bottomAndFrontBack.append(line(Point(0, -(backForHinge - self.thickness * (1.0 + math.sqrt(2)) / 2.0))))
         bottomAndFrontBack.append(line(Point(self.thickness, 0)))
-        if self.boxType.hasHinges():
+        if self.boxType.has_hinges():
             bottomAndFrontBack.append(line(Point(0, backForHinge)))
 
         self.markPoints(bottomAndFrontBack.finalPosition(), 'yellow')
@@ -630,10 +631,10 @@ class BoxMaker(inkex.Effect):
         # front top next
         # Aussparung fuer Deckel
         bottomAndFrontBack.append(line(Point(-self.thickness, 0)))
-        if self.boxType.hasHinges():
+        if self.boxType.has_hinges():
             bottomAndFrontBack.append(line(Point(0, self.thickness)))
         bottomAndFrontBack.append(line(Point(-self.boxWidth + 2 * self.thickness, 0)))
-        if self.boxType.hasHinges():
+        if self.boxType.has_hinges():
             bottomAndFrontBack.append(line(Point(0, -self.thickness)))
         bottomAndFrontBack.append(line(Point(-self.thickness, 0)))
 
@@ -696,7 +697,7 @@ class BoxMaker(inkex.Effect):
 
         leftHingecenter = leftBoxStart.add(self.boxHeight - self.thickness / 2,
                                            self.boxDepth - self.thickness - self.thickness / 2);
-        if self.boxType.hasHinges():
+        if self.boxType.has_hinges():
             self.insertCircle(self.thickness * math.sqrt(2) / 2, leftHingecenter, 'green')
 
         leftPart.MoveTo(leftBoxStart)
@@ -704,7 +705,7 @@ class BoxMaker(inkex.Effect):
         # leftPart.append(line(Point(0, self.thickness)))
         leftPart.extend(self.boxFrames(self.boxHeight, Direction.left))
         leftPart.append(line(Point(0, self.boxDepth - 2 * self.thickness)))
-        if self.boxType.hasHinges():
+        if self.boxType.has_hinges():
             leftPart.append(line(Point(0, +0.5 * self.thickness - dx)))
             leftPart.append(
                 circleArc(outerRadius, Point(-(dx + self.thickness / 2), dx + self.thickness / 2 - self.thickness)))
@@ -723,14 +724,14 @@ class BoxMaker(inkex.Effect):
 
         rightBoxStart = start.add(self.boxWidth + 2, self.boxDepth + self.thickness + 2 * outerRadius)
 
-        if self.boxType.hasHinges():
+        if self.boxType.has_hinges():
             rightHingecenter = rightBoxStart.add(self.boxHeight - self.thickness / 2, - self.thickness / 2);
             self.insertCircle(self.thickness * math.sqrt(2) / 2, rightHingecenter, 'green')
 
         rightPart.MoveTo(rightBoxStart)
 
         rightPart.extend(self.boxFrames(self.boxHeight, Direction.left))
-        if self.boxType.hasHinges():
+        if self.boxType.has_hinges():
             rightPart.append(line(Point(-dx - self.thickness / 2, 0)))
             rightPart.append(
                 circleArc(outerRadius, Point((dx + self.thickness / 2), dx + self.thickness / 2 - self.thickness)))
@@ -746,9 +747,9 @@ class BoxMaker(inkex.Effect):
         self.insertPath(rightPart.simplify())
 
         if (self.boxType == shelvedBox):
-            self.drawShelves(start)
+            self.draw_linehelves(start)
         # TOP Part (only for hinged boxes)
-        if self.boxType.hasHinges():
+        if self.boxType.has_hinges():
 
             topStart = start.add(self.boxWidth + self.boxHeight + 1 * self.hingeCircleFactor * self.thickness, 0)
             topPart = Path()
@@ -818,13 +819,13 @@ class BoxMaker(inkex.Effect):
 
     #
     # =============================================================================
-    def drawShelves(self, start):
+    def draw_linehelves(self, start):
         for ii in range(self.shelfcount - 1):
             shelfStart = start.add(self.boxWidth + self.boxHeight + self.thickness,
                                    self.thickness + ii * (self.boxDepth + self.thickness))
-            self.drawShelf(shelfStart)
+            self.draw_linehelf(shelfStart)
 
-    def drawShelf(self, shelfStart):
+    def draw_linehelf(self, shelfStart):
 
         leftPart = Path();
 
@@ -840,9 +841,9 @@ class BoxMaker(inkex.Effect):
 
         self.insertPath(leftPart.simplify())
 
-    def insertRect(self, startPos, dx, dy, color='black'):
+    def insertRect(self, start_pos, dx, dy, color='black'):
         box = Path()
-        box.MoveTo(startPos)
+        box.MoveTo(start_pos)
         box.lineBy(Point(dx, 0))
         box.lineBy(Point(0, dy))
         box.lineBy(Point(-dx, 0))
@@ -870,8 +871,8 @@ class BoxMaker(inkex.Effect):
     def toSVGString(self):
         return "a %f %f 0 1 1 %f %f" % (self.r, self.r, self.endPoint.x, self.endPoint.y)
 
-    def newPos(self, startPos):
-        return startPos.add(self.endPoint.x, self.endPoint.y)
+    def newPos(self, start_pos):
+        return start_pos.add(self.endPoint.x, self.endPoint.y)
 
     def printDate(self, date=datetime.now()):
         return date.strftime('%d.%m.%y %H:%M')
